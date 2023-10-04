@@ -1457,11 +1457,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\nerf3\\source\\repos\\ProjetoWebApiMaju\\ProjetoWebApiMaju\\ProjetoEmpreendeMaster.csproj",
+      "projectUniqueName": "C:\\Users\\nerf3\\source\\repos\\ProjetoWebApiMaju\\ProjetoEmpreendeMaster\\ProjetoEmpreendeMaster.csproj",
       "projectName": "ProjetoEmpreendeMaster",
-      "projectPath": "C:\\Users\\nerf3\\source\\repos\\ProjetoWebApiMaju\\ProjetoWebApiMaju\\ProjetoEmpreendeMaster.csproj",
+      "projectPath": "C:\\Users\\nerf3\\source\\repos\\ProjetoWebApiMaju\\ProjetoEmpreendeMaster\\ProjetoEmpreendeMaster.csproj",
       "packagesPath": "C:\\Users\\nerf3\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\nerf3\\source\\repos\\ProjetoWebApiMaju\\ProjetoWebApiMaju\\obj\\",
+      "outputPath": "C:\\Users\\nerf3\\source\\repos\\ProjetoWebApiMaju\\ProjetoEmpreendeMaster\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

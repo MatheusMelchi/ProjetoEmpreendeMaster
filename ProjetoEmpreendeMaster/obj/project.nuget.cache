@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "7sIG7n50h9S7K56Iqfsw3eYmb/Ugql5pQGCHmKPG63fckyfbdVvt6de4CKIsSVVlua7NU2suTaY8nNtg9lX7iA==",
+  "dgSpecHash": "eOy7l1gwPXT2QhxD+sOhmT6gt3hXxNvEjw48rVzdOQ55dCNpSvdx9HVdcdZ26MUMRO9Jk1N2zaoSVpOQpeqgDg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\nerf3\\source\\repos\\ProjetoWebApiMaju\\ProjetoWebApiMaju\\ProjetoEmpreendeMaster.csproj",
+  "projectFilePath": "C:\\Users\\nerf3\\source\\repos\\ProjetoWebApiMaju\\ProjetoEmpreendeMaster\\ProjetoEmpreendeMaster.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\nerf3\\.nuget\\packages\\microsoft.entityframeworkcore\\7.0.11\\microsoft.entityframeworkcore.7.0.11.nupkg.sha512",
     "C:\\Users\\nerf3\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\7.0.11\\microsoft.entityframeworkcore.abstractions.7.0.11.nupkg.sha512",

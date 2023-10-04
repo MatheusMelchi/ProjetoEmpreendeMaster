@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjetoEmpreendeMaster", "ProjetoWebApiMaju\ProjetoEmpreendeMaster.csproj", "{1822FEDE-2396-4744-94B8-E05E60D014AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjetoEmpreendeMaster", "ProjetoEmpreendeMaster\ProjetoEmpreendeMaster.csproj", "{1822FEDE-2396-4744-94B8-E05E60D014AE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
