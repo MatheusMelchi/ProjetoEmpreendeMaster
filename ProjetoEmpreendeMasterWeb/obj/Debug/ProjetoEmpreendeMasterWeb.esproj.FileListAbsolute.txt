@@ -1,0 +1,2 @@
+C:\Users\nerf3\source\repos\ProjetoWebApiMaju\ProjetoEmpreendeMasterWeb\obj\Debug\ProjetoEmpreendeMasterWeb.esproj.SuggestedBindingRedirects.cache
+C:\Users\nerf3\source\repos\ProjetoWebApiMaju\ProjetoEmpreendeMasterWeb\obj\Debug\ProjetoEmpreendeMasterWeb.esproj.CoreCompileInputs.cache

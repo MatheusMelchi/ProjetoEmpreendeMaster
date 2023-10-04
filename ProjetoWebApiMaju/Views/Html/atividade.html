@@ -1,0 +1,289 @@
+﻿<!DOCTYPE html>
+
+<html ng-app="atividadeEmpreende" ng-controller="atividadeEmpreendeController">
+<head>
+    <meta charset="utf-8" />
+    <title>Empreende Master Atividades</title>
+    <script src="../AngularJs/angular.js"></script>
+    <script src="../JS/bootstrap.bundle.js"></script>
+    <script src="../JS/ng-notify.min.js"></script>
+    <script src="../JS/unpkg.com_@uirouter_angularjs@1.1.0_release_angular-ui-router.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/angular.ng-notify/0.8.0/ng-notify.min.css" rel="stylesheet" crossorigin="anonymous" />
+
+    <script>
+        angular.module("atividadeEmpreende", ['ngNotify', 'ui.router']);
+        angular.module("atividadeEmpreende").controller("atividadeEmpreendeController", function ($scope, $http, ngNotify) {
+            $scope.estudante = true;
+            $scope.educador = false;
+            $scope.adicionarAtividade = {
+                nome: null,
+                educadorId: 43,
+                estudanteId: null,
+                arquivo: null
+            };
+
+            $http.get("https://localhost:7076/Api/Atividade/AtividadesUsuario?estudante_id=" + 43)
+                .then(function (response) {
+                    $scope.usuario = response.data.usuario;
+                    $scope.listaAtividades = response.data.atividades;
+                    if ($scope.usuario.tipoUsuarioId == 2) {
+                        $scope.estudante = false;
+                        $scope.educador = true;
+
+                        $http.get("https://localhost:7076/Api/Usuario/UsuariosEstudantes")
+                            .then(function (response) {
+                                $scope.usuariosEstudantes = response.data;
+                                console.log($scope.usuariosEstudantes);
+                            })
+
+                        $http.get("https://localhost:7076/Api/Atividade/AtividadesUsuarioEducador?educador_id=" + 43)
+                            .then(function (response) {
+                                $scope.usuario = response.data.usuario;
+                                $scope.listaAtividades = response.data.atividades;
+                            })
+                    }
+                });
+
+            $scope.incluirAtividade = function () {
+                var reader = new FileReader()
+                var file = document.getElementById('atividadeArquivo').files[0];
+                reader.readAsBinaryString(file)
+                reader.onloadend = function () {
+                    $scope.adicionarAtividade.arquivo = reader.result;
+                    console.log($scope.adicionarAtividade.arquivo);
+
+                    $http.post("https://localhost:7076/Api/Atividade/AdicionarAtividade", $scope.adicionarAtividade)
+                        .then(function (response) {
+                            ngNotify.set("Atividade Adicionada!", 'sucess')
+
+                        }).catch(function (exception) {
+                            ngNotify.set("Atividade Invalida", 'error');
+                        });
+                }
+
+            }
+
+            $scope.concluirAtividade = function (atividade) {
+                atividade.concluido = true;
+
+                $http.post("https://localhost:7076/Api/Atividade/ConcluirAtividade", atividade)
+                    .then(function (response) {
+                        ngNotify.set(response.data, 'sucess');
+
+                        if ($scope.usuario.tipoUsuarioId == 2) {
+                            $http.get("https://localhost:7076/Api/Atividade/AtividadesUsuarioEducador?educador_id=" + 43)
+                                .then(function (response) {
+                                    $scope.usuario = response.data.usuario;
+                                    $scope.listaAtividades = response.data.atividades;
+                                })
+                        } else if ($scope.usuario.tipoUsuarioId == 3) {
+                            $http.get("https://localhost:7076/Api/Atividade/AtividadesUsuario?estudante_id=" + 43)
+                                .then(function (response) {
+                                    $scope.usuario = response.data.usuario;
+                                    $scope.listaAtividades = response.data.atividades;
+                                })
+                        }
+
+                    })
+            }
+
+            $scope.setarAtividade = function (atividade) {
+                $scope.atividadeCorrecao = atividade;
+            }
+
+            $scope.correcaoAtividade = function () {
+                var reader = new FileReader()
+                var file = document.getElementById('atividadeArquivoCorrecao').files[0];
+                reader.readAsBinaryString(file)
+                reader.onloadend = function () {
+                    let atividadeAtualizacao = {
+                        atividade: $scope.atividadeCorrecao,
+                        arquivoAtualizacao: reader.result
+                    }
+
+                    $http.put("https://localhost:7076/Api/Atividade/AtualizarAtividadeCorrecao", atividadeAtualizacao)
+                        .then(function (response) {
+                            ngNotify.set(response.data, 'sucess');
+
+                            $http.get("https://localhost:7076/Api/Atividade/AtividadesUsuarioEducador?educador_id=" + 43)
+                                .then(function (response) {
+                                    $scope.usuario = response.data.usuario;
+                                    $scope.listaAtividades = response.data.atividades;
+                                })
+                        })
+                }
+            }
+
+            $scope.obterArquivoCorrecaoAtividade = function (atividadeId) {
+                $http.get("https://localhost:7076/Api/Atividade/GetArquivoCorrecao?atividadeId=" + atividadeId, { responseType: 'arraybuffer' })
+                    .then(function (response) {
+                        abrirArquivo(response.data)
+                    })
+            }
+
+
+            $scope.obterArquivoAtividade = function (atividadeId) {
+                $http.get("https://localhost:7076/Api/Atividade/GetArquivoAtividade?atividadeId=" + atividadeId, { responseType: 'arraybuffer' })
+                    .then(function (response) {
+                        abrirArquivo(response.data)
+                    })
+            }
+
+            var abrirArquivo = function (arquivo) {
+                console.log(arquivo);
+                console.log(typeof arquivo);
+
+                let blob = new Blob([arquivo], { type: 'application/pdf' });
+
+                let objectURL = URL.createObjectURL(blob);
+                window.open(objectURL);
+            }
+
+
+        });
+
+    </script>
+
+
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color: #036001">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">
+                    <img src="../Images/EmpreendeMasterLogoCortadaCerta.png" alt="logo">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#">Atividades</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Perfil</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container-fluid">
+        <div>
+            <h3>Bem-vindo {{educador ? "Educador" : "Estudante"}} {{usuario.nomeCompleto}}</h3>
+
+            <h5>Suas Atividades <span ng-if="educador">para correção</span>:</h5>
+            <br />
+        </div>
+        <Table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Nota</th>
+                    <th scope="col">Arquivo</th>
+                    <th scope="col">Arquivo Correção</th>
+                    <th scope="col">Concluido</th>
+                    <th scope="col" ng-if="educador">Concluir?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="atividade in listaAtividades">
+                    <td>{{atividade.nome}}</td>
+                    <td>{{atividade.nota}}</td>
+                    <td><button type="button" class="btn btn-primary" ng-click="obterArquivoAtividade(atividade.id)" style="background-color: #048002; border-block-color: #048002">Abrir Arquivo</button></td>
+                    <td ng-if="atividade.arquivoAtividadeCorrecao == null"><button type="button" class="btn btn-primary" ng-click="setarAtividade(atividade)" data-bs-toggle="modal" data-bs-target="#arquivoAtividadeModal" style="background-color: #048002; border-block-color: #048002">Enviar Correção</button></td>
+                    <td ng-if="atividade.arquivoAtividadeCorrecao != null"><button type="button" class="btn btn-primary" ng-click="obterArquivoCorrecaoAtividade(atividade.id)" style="background-color: #048002; border-block-color: #048002">Abrir Correção</button></td>
+                    <td>{{atividade.concluido ? 'Sim' : 'Não'}}</td>
+                    <td ng-if="educador"><button class="btn btn-green" ng-click="setarAtividade(atividade)" style="background-color: #024001; color: white" data-bs-toggle="modal" data-bs-target="#modalConcluirAtividade">Concluir</button></td>
+                </tr>
+        </Table>
+        <div>
+            <button type="button" class="btn btn-primary" ng-click="" data-bs-toggle="modal" data-bs-target="#exampleModal" style="background-color: #048002; border-block-color: #048002" ng-if="educador">
+                Adicionar Atividade
+            </button>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Adicionar Atividade</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form name="atividadeForm" class="form">
+                        <div class="mb-3">
+                            <label for="atividadeNome" class="form-label">Nome Atividade</label>
+                            <input type="text" class="form-control" id="atividadeNome" ng-model="adicionarAtividade.nome" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="atividadeEstudante" class="form-label">Estudante</label>
+                            <select id="atividadeEstudante" class="form-select" aria-label="Default select example" ng-model="adicionarAtividade.estudanteId" required>
+                                <option ng-repeat="estudante in usuariosEstudantes" value="{{ estudante.id }}"> {{ estudante.nomeCompleto }}</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="atividadeArquivo" class="form-label">Arquivo Atividade</label>
+                            <input class="form-control" type="file" id="atividadeArquivo" name="arquivoAtividade">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" ng-click="incluirAtividade()" ng-disabled="atividadeForm.$invalid || adicionarAtividade.estudanteId == null" data-bs-dismiss="modal">Adicionar Atividade</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="arquivoAtividadeModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalLabel">Arquivo Atividade Correção</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form name="arquivoAtividadeCorrecaoForm" class="form">
+                        <div class="mb-3">
+                            <label for="atividadeArquivoCorrecao" class="form-label">Arquivo Atividade</label>
+                            <input class="form-control" type="file" id="atividadeArquivoCorrecao" name="atividadeArquivoCorrecao">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" ng-click="correcaoAtividade()" ng-disabled="arquivoAtividadeCorrecaoForm.$invalid" data-bs-dismiss="modal">Adicionar Arquivo Atividade Correção</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalConcluirAtividade" tabindex="-1" aria-labelledby="concluirModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalLabel">Concluir Atividade</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form name="concluirAtividadeForm" class="form">
+                        <div class="mb-3">
+                            <label for="notaAtividade" class="form-label">Nota Atividade</label>
+                            <input type="number" class="form-control" id="notaAtividade" ng-model="atividadeCorrecao.nota" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" ng-click="concluirAtividade(atividadeCorrecao)" ng-disabled="concluirAtividadeForm.$invalid" data-bs-dismiss="modal">Concluir Atividade</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

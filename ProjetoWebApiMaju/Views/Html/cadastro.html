@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html ng-app="cadastroEmpreende" ng-controller="cadastroEmpreendeController">
+<head>
+    <meta charset="utf-8" />
+    <title>Empreende Master Cadastro</title>
+    <script src="../AngularJs/angular.js"></script>
+    <script src="../JS/bootstrap.bundle.js"></script>
+    <script src="../JS/ng-notify.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/angular.ng-notify/0.8.0/ng-notify.min.css" rel="stylesheet" crossorigin="anonymous" />
+    <script>
+        angular.module("cadastroEmpreende", ['ngNotify']);
+        angular.module("cadastroEmpreende").controller("cadastroEmpreendeController", function ($scope, $http, ngNotify) {
+
+            $scope.usuario = {
+                email: "",
+                senha: "",
+                cpf: "",
+                dataNascimento: null,
+                nomeCompleto: ""
+            };
+
+            $scope.postUsuario = function () {
+                $http.post("https://localhost:7076/Api/Usuario", $scope.usuario)
+                    .then(function (response) {
+                        ngNotify.set("Cadastro efetuado", 'sucess');
+                    }).catch(function (exception) {
+                        ngNotify.set("Cadastro não efetuado", 'error');
+                    })
+            }
+        });
+
+    </script>
+
+
+
+</head>
+<body>
+    <div>
+        <img style="align-content: center" src="../Images/EmpreendeMasterLogoCortadaCerta.png" />
+        <h3 style="text-align: center; padding-top: 3%">Empreende Master Cadastro</h3>
+    </div>
+    <div style="margin: auto; width: 50%; padding-top: 2%">
+        <form name="cadastroForm" ng-submit="postUsuario()" class="form">
+            <div class="mb-3">
+                <label for="cadastroEmail" class="form-label">Email</label>
+                <input type="email" class="form-control" id="cadastroEmail" placeholder="email@dominio.com.br" ng-model="usuario.email" required>
+            </div>
+            <div class="mb-3">
+                <label for="senhaEmail" class="form-label">Senha</label>
+                <input type="password" class="form-control" id="senhaEmail" ng-model="usuario.senha" required>
+            </div>
+            <div class="mb-3">
+                <label for="cpfEmail" class="form-label">Cpf</label>
+                <input type="text" class="form-control" id="cpfEmail" ng-model="usuario.cpf" maxlength="14" required>
+            </div>
+            <div class="mb-3">
+                <label for="dataNascimentoEmail" class="form-label">Data Nascimento</label>
+                <input type="date" class="form-control" data-format="dd/MM/yyyy" id="dataNascimentoEmail" ng-model="usuario.dataNascimento" required>
+                <span class="add-on">
+                    <i data-time-icon="icon-time" data-date-icon="icon-calendar">
+                    </i>
+                </span>
+            </div>
+            <div class="mb-3">
+                <label for="nomeCompletoEmail" class="form-label">Nome Completo</label>
+                <input type="text" class="form-control" id="nomeCompletoEmail" ng-model="usuario.nomeCompleto" required>
+            </div>
+            <div class="mb-3">
+                <label for="tipoUsuario" class="form-label">Tipo</label>
+                <input type="number" class="form-control" id="tipoUsuario" ng-model="usuario.tipoUsuarioId" required>
+            </div>
+            <div style="margin: auto; width: 25%">
+                <button class="btn btn-primary" type="submit" ng-disabled="cadastroForm.$invalid" style="background-color: #024001; border-color: #024001">Cadastro</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
